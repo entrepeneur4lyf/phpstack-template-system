@@ -13,7 +13,6 @@ class HtmxComponents
 {
     private HtmxConfig $config;
     /** @var array<callable> */
-    /** @var array<callable> */
     private array $beforeRequestHooks = [];
     /** @var array<callable> */
     private array $beforeRenderHooks = [];
@@ -43,6 +42,24 @@ class HtmxComponents
         $this->registerResponseHandlers($engine);
         $this->registerEventHandlers($engine);
         $this->registerJavaScriptAPI($engine);
+
+        // Use the hooks
+        $this->executeBeforeRequestHooks();
+        $this->executeBeforeRenderHooks();
+    }
+
+    private function executeBeforeRequestHooks(): void
+    {
+        foreach ($this->beforeRequestHooks as $hook) {
+            $hook();
+        }
+    }
+
+    private function executeBeforeRenderHooks(): void
+    {
+        foreach ($this->beforeRenderHooks as $hook) {
+            $hook();
+        }
     }
 
     public function registerPlugin(string $name, PluginInterface|callable $plugin, string $version): void
@@ -174,20 +191,19 @@ class HtmxComponents
 
     private function registerResponseHandlers(TemplateEngine $engine): void
     {
-        if (method_exists($engine, 'registerResponseHandler')) {
-            $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
-        } else {
+        if (!method_exists($engine, 'registerResponseHandler')) {
             throw new \RuntimeException("Method 'registerResponseHandler' not found in TemplateEngine");
         }
+        $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
     }
 
     private function registerEventHandlers(TemplateEngine $engine): void
     {
         $engine->registerExtension('htmx-event-script', function(...$args) {
-            if (class_exists(HtmxEventHandler::class) && method_exists(HtmxEventHandler::class, 'getEventScript')) {
-                return HtmxEventHandler::getEventScript(...$args);
+            if (!class_exists(HtmxEventHandler::class) || !method_exists(HtmxEventHandler::class, 'getEventScript')) {
+                throw new \RuntimeException("HtmxEventHandler class or getEventScript method not found");
             }
-            throw new \RuntimeException("HtmxEventHandler class or getEventScript method not found");
+            return HtmxEventHandler::getEventScript(...$args);
         });
     }
 

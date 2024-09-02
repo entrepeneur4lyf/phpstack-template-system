@@ -33,6 +33,9 @@ class ComponentPlugin implements PluginInterface
     private ErrorHandler $errorHandler;
     private DebugManager $debugManager;
 
+    /** @var array<string, array{component: callable|LazyLoadedComponent, style: ?string, script: ?string, events: array<string, callable>, dependencies: array<string>}> */
+    private array $components = [];
+
     /**
      * ComponentPlugin constructor.
      *
@@ -64,7 +67,7 @@ class ComponentPlugin implements PluginInterface
      * @return string|Fiber|null The rendered component content, a Fiber for async execution, or null on error
      * @throws \RuntimeException If required arguments are missing or component is not registered
      */
-    public function execute(array $args, array $data)
+    public function execute(array $args, array $data): string|Fiber|null
     {
         $name = $args['name'] ?? null;
         if ($name === null) {
