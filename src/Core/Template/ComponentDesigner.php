@@ -98,6 +98,13 @@ class ComponentDesigner
     /**
      * @param array<string, mixed> $options
      */
+    /**
+     * Applies plugins to a component.
+     *
+     * @param string $name The name of the component.
+     * @param array<string, mixed> $options The options for the component.
+     * @return string The output after applying plugins.
+     */
     private function applyPlugins(string $name, array $options): string
     {
         $pluginOutput = "";
@@ -109,6 +116,12 @@ class ComponentDesigner
         return $pluginOutput;
     }
 
+    /**
+     * Generates lifecycle hooks for a component.
+     *
+     * @param string $name The name of the component.
+     * @return string The JavaScript code for lifecycle hooks.
+     */
     private function generateLifecycleHooks(string $name): string
     {
         return "
