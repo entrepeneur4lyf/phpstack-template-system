@@ -63,21 +63,12 @@ class AsyncFileManager
         });
     }
 
-    public function deleteFile(string $filename): PromiseInterface
+    public function deleteFile(string $filename): void
     {
-        $deferred = new Deferred();
-
-        Loop::get()->addTimer(0, function () use ($filename, $deferred) {
-            $result = @unlink($filename);
-            if ($result === false) {
-                $deferred->reject(new \RuntimeException("Failed to delete file: $filename"));
-            } else {
-                $cacheKey = 'file_' . $filename;
-                $this->fileCacheManager->delete($cacheKey);
-                $deferred->resolve(true);
-            }
-        });
-
-        return $deferred->promise();
+        if (!unlink($filename)) {
+            throw new \RuntimeException("Failed to delete file: $filename");
+        }
+        $cacheKey = 'file_' . $filename;
+        $this->fileCacheManager->delete($cacheKey);
     }
 }
