@@ -4,6 +4,7 @@ parameters:
         - src
     excludePaths:
         - tests
+        - vendor
     ignoreErrors:
         - message: '#Static property .+ is never read, only written\.#'
           path: src/Core/Template/HtmxComponents.php
@@ -24,9 +25,3 @@ parameters:
         - message: '#parameter \$.+ with no value type specified in iterable type array\.#'
         - message: '#return type has no value type specified in iterable type array\.#'
         - message: '#type has no value type specified in iterable type array\.#'
-        parameters:
-          level: 5
-    paths:
-        - src
-    excludePaths:
-        - vendor
