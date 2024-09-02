@@ -4,15 +4,20 @@ namespace phpStack\TemplateSystem\Core\Plugins;
 
 use phpStack\TemplateSystem\Core\Template\PluginInterface;
 
-class IfPlugin implements PluginInterface
+class ForeachPlugin implements PluginInterface
 {
     public function execute(array $args, array $data)
     {
-        $condition = $args['condition'] ?? false;
-        $then = $args['then'] ?? '';
-        $else = $args['else'] ?? '';
+        $array = $args['array'] ?? [];
+        $body = $args['body'] ?? '';
+        $result = '';
 
-        return $condition ? $then : $else;
+        foreach ($array as $key => $value) {
+            $itemBody = str_replace(['{key}', '{value}'], [$key, $value], $body);
+            $result .= $itemBody;
+        }
+
+        return $result;
     }
 
     public function getDependencies(): array

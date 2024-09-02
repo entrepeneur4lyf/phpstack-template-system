@@ -1,9 +1,9 @@
 <?php
 
-namespace phpStack\Core\Template\Plugins;
+namespace phpStack\TemplateSystem\Core\Template\Plugins;
 
-use phpStack\Core\Template\PluginInterface;
-use phpStack\Core\Template\TemplateEngine;
+use phpStack\Core\TemplateSystem\PluginInterface;
+use phpStack\Core\TemplateSystem\TemplateEngine;
 
 class ForPlugin implements PluginInterface
 {
