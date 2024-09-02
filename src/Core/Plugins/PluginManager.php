@@ -377,7 +377,7 @@ class PluginSandbox
         
         // Disable potentially dangerous functions
         foreach ($disabledFunctions as $function) {
-            disable_function($function);
+            // disable_function($function); // This function does not exist
         }
 
         // Set memory and execution time limits
@@ -393,7 +393,7 @@ class PluginSandbox
         } finally {
             // Re-enable functions and reset limits
             foreach ($disabledFunctions as $function) {
-                enable_function($function);
+                // enable_function($function); // This function does not exist
             }
             ini_restore('memory_limit');
             set_time_limit(0); // Reset to unlimited

@@ -14,7 +14,7 @@ class AsyncFileManager
         $this->fileCacheManager = new FileCacheManager($cacheDir, $defaultTtl);
     }
 
-    public function readFile(string $filename): Fiber|null
+    public function readFile(string $filename): ?Fiber
     {
         return new Fiber(function () use ($filename) {
             $cacheKey = 'file_' . $filename;
@@ -34,7 +34,7 @@ class AsyncFileManager
             }
             fclose($handle);
 
-            if ($contents === false) {
+            if ($contents === '') {
                 throw new \RuntimeException("Failed to read file: $filename");
             }
             $this->fileCacheManager->set($cacheKey, $contents);
@@ -42,7 +42,7 @@ class AsyncFileManager
         });
     }
 
-    public function writeFile(string $filename, string $content): Fiber|null
+    public function writeFile(string $filename, string $content): ?Fiber
     {
         return new Fiber(function () use ($filename, $content) {
             $handle = fopen($filename, 'wb');
