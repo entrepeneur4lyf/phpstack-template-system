@@ -23,4 +23,9 @@ parameters:
           path: src/Core/Template/HtmxComponents.php
         - message: '#parameter \$.+ with no value type specified in iterable type array\.#'
         - message: '#return type has no value type specified in iterable type array\.#'
-        - message: '#type has no value type specified in iterable type array\.#'
+        - message: '#type has no value type specified in iterable type array\.#'parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        - vendor

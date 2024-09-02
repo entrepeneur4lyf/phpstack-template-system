@@ -50,3 +50,6 @@
         "phpstack-template-system/phpstack-template-system.php": "1.0"
     }
 }
+    "scripts": {
+        "phpstan": "phpstan analyse -c phpstan.neon"
+    }
