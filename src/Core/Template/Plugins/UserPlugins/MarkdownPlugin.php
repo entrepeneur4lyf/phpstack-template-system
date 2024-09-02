@@ -6,6 +6,22 @@ use phpStack\TemplateSystem\Core\Plugins\HtmxPluginInterface;
 
 class MarkdownPlugin implements HtmxPluginInterface
 {
+    private $htmlToMarkdownMap = [
+        'h1' => '# ',
+        'h2' => '## ',
+        'h3' => '### ',
+        'h4' => '#### ',
+        'h5' => '##### ',
+        'h6' => '###### ',
+        'strong' => '**',
+        'em' => '*',
+        'code' => '`',
+        'pre' => '```',
+        'a' => '[%s](%s)',
+        'ul' => '',
+        'ol' => '',
+        'li' => '- ',
+    ];
     public function processHtmxContent(string $content): string
     {
         return preg_replace_callback('/\{\{markdown\}\}(.*?)\{\{\/markdown\}\}/s', function($matches) {
