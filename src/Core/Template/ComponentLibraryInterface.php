@@ -2,6 +2,11 @@
 
 namespace phpStack\Core\Template;
 
+/**
+ * Class ComponentLibraryInterface
+ *
+ * Provides an interface for rendering and previewing components.
+ */
 class ComponentLibraryInterface
 {
     private $templateEngine;

@@ -6,6 +6,11 @@ use phpStack\TemplateSystem\Core\Template\Plugins\ComponentPlugin;
 use Psr\Cache\CacheItemPoolInterface;
 use phpStack\TemplateSystem\Core\Plugins\HtmxPluginManager;
 
+/**
+ * Class TemplateEngine
+ *
+ * The main engine for rendering templates.
+ */
 class TemplateEngine
 {
     private string $templateDir;

@@ -4,6 +4,11 @@ namespace phpStack\TemplateSystem\Core\Template;
 
 use Fiber;
 
+/**
+ * Class TemplateRenderer
+ *
+ * Renders templates into their final output.
+ */
 class TemplateRenderer
 {
     private $pluginManager;

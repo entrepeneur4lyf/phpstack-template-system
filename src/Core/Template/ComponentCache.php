@@ -2,6 +2,11 @@
 
 namespace phpStack\Core\Template;
 
+/**
+ * Class ComponentCache
+ *
+ * Caches components to optimize rendering.
+ */
 class ComponentCache
 {
     private $cache = [];

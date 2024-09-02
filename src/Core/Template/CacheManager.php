@@ -2,6 +2,11 @@
 
 namespace phpStack\Core\Template;
 
+/**
+ * Class CacheManager
+ *
+ * Manages caching for templates to improve performance.
+ */
 class CacheManager
 {
     private $localCache;

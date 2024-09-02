@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxRequestHandler
+ *
+ * Handles HTMX requests within the template system.
+ */
 class HtmxRequestHandler
 {
     public static function handle(array $request): array

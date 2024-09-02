@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class PerformanceProfiler
+ *
+ * Profiles the performance of template rendering.
+ */
 class PerformanceProfiler
 {
     /** @var array<string, float> */

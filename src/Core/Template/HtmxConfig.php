@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxConfig
+ *
+ * Configuration settings for HTMX integration.
+ */
 class HtmxConfig
 {
     private $config = [

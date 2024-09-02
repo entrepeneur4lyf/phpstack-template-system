@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxBaseComponent
+ *
+ * Base class for HTMX components providing common functionality.
+ */
 abstract class HtmxBaseComponent
 {
     /**

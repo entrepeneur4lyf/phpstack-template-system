@@ -4,6 +4,11 @@ namespace phpStack\TemplateSystem\Core\Template;
 
 use phpStack\TemplateSystem\Core\Plugins\PluginManager;
 
+/**
+ * Class ComponentDesigner
+ *
+ * Provides tools for designing and managing components.
+ */
 class ComponentDesigner
 {
     private TemplateEngine $engine;

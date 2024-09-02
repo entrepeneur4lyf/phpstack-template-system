@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxResponseHandler
+ *
+ * Handles HTMX responses within the template system.
+ */
 class HtmxResponseHandler
 {
     public static function addHeaders(array $response): array

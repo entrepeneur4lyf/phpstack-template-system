@@ -5,6 +5,11 @@ namespace phpStack\TemplateSystem\Core\Template;
 use phpStack\TemplateSystem\Core\Security\SandboxSecurityPolicy;
 use phpStack\TemplateSystem\Core\Exceptions\ErrorHandler;
 
+/**
+ * Class PluginSandbox
+ *
+ * Provides a sandbox environment for executing plugins.
+ */
 class PluginSandbox
 {
     private SandboxSecurityPolicy $securityPolicy;

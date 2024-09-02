@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class LazyLoadedComponent
+ *
+ * Represents a component that is loaded lazily.
+ */
 class LazyLoadedComponent
 {
     /** @var callable */

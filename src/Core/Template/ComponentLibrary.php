@@ -4,6 +4,11 @@ namespace phpStack\Core\Template;
 
 use Composer\Autoload\ClassLoader;
 
+/**
+ * Class ComponentLibrary
+ *
+ * A library of reusable components for templates.
+ */
 class ComponentLibrary
 {
     private $templateEngine;

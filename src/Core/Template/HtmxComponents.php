@@ -4,6 +4,11 @@ namespace phpStack\TemplateSystem\Core\Template;
 
 use phpStack\TemplateSystem\Core\Plugins\PluginManager;
 
+/**
+ * Class HtmxComponents
+ *
+ * Manages a collection of HTMX components.
+ */
 class HtmxComponents
 {
     private HtmxConfig $config;

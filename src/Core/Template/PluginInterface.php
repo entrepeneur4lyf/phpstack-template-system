@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Interface PluginInterface
+ *
+ * Defines the contract for plugins in the template system.
+ */
 interface PluginInterface
 {
     /**

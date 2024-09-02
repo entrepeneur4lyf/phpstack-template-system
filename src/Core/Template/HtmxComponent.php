@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxComponent
+ *
+ * Represents an HTMX component within the template system.
+ */
 abstract class HtmxComponent extends HtmxBaseComponent
 {
     protected static function addHtmxAttributes(array &$args): void

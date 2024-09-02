@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace phpStack\Core\Template;
 
+/**
+ * Class DebugManager
+ *
+ * Provides debugging tools for template rendering.
+ */
 class DebugManager
 {
     private $componentHierarchy = [];

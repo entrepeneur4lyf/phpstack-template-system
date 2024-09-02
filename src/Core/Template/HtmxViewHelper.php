@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class HtmxViewHelper
+ *
+ * Provides helper functions for HTMX views.
+ */
 class HtmxViewHelper
 {
     private HtmxConfig $config;

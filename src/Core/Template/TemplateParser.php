@@ -2,6 +2,11 @@
 
 namespace phpStack\TemplateSystem\Core\Template;
 
+/**
+ * Class TemplateParser
+ *
+ * Parses templates into a format suitable for rendering.
+ */
 class TemplateParser
 {
     public function parse(string $template): array

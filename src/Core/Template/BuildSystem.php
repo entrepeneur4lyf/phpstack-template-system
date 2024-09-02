@@ -5,6 +5,11 @@ namespace phpStack\Core\Template;
 use MatthiasMullie\Minify;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Class BuildSystem
+ *
+ * Handles the build process for templates.
+ */
 class BuildSystem
 {
     private $componentLibrary;

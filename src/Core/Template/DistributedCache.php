@@ -4,6 +4,11 @@ namespace phpStack\Core\Template;
 
 use Redis;
 
+/**
+ * Class DistributedCache
+ *
+ * Manages distributed caching for templates.
+ */
 class DistributedCache
 {
     private $redis;
