@@ -14,7 +14,7 @@ class AsyncFileManager
         $this->fileCacheManager = new FileCacheManager($cacheDir, $defaultTtl);
     }
 
-    public function readFile(string $filename): Fiber
+    public function readFile(string $filename): Fiber|null
     {
         return new Fiber(function () use ($filename) {
             $cacheKey = 'file_' . $filename;
@@ -42,7 +42,7 @@ class AsyncFileManager
         });
     }
 
-    public function writeFile(string $filename, string $content): Fiber
+    public function writeFile(string $filename, string $content): Fiber|null
     {
         return new Fiber(function () use ($filename, $content) {
             $handle = fopen($filename, 'wb');
