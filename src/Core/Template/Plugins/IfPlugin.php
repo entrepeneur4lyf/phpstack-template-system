@@ -1,8 +1,8 @@
 <?php
 
-namespace phpStack\Core\Template\Plugins;
+namespace phpStack\TemplateSystem\Core\Template\Plugins;
 
-use phpStack\Core\Template\PluginInterface;
+use phpStack\TemplateSystem\Core\Template\PluginInterface;
 
 class IfPlugin implements PluginInterface
 {
