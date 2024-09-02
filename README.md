@@ -14,8 +14,12 @@ composer require phpStack/template-system
 
 For comprehensive documentation on how to use the phpStack Template System, please refer to the following resources:
 
-1. [Comprehensive Guide](docs/comprehensive_guide.md) - Detailed explanation of all features and components.
-2. [API Reference](docs/api_reference.md) - Complete API documentation for all classes and methods.
+1. [Overview](src/documentation/Overview.md) - Introduction to the system's architecture and features.
+2. [Installation Guide](src/documentation/Installation.md) - Step-by-step installation instructions.
+3. [Usage Examples](src/documentation/UsageExamples.md) - Practical examples demonstrating various features.
+4. [Configuration Guide](src/documentation/Configuration.md) - Details on configuring the system.
+5. [Advanced Configuration](src/documentation/AdvancedConfiguration.md) - Explore advanced configuration options.
+6. [Plugin System Documentation](src/documentation/PluginSystem.md) - Guide to creating and managing plugins.
 
 ## Usage Examples
 
