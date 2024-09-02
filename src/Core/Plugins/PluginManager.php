@@ -24,6 +24,21 @@ class PluginManager
     /** @var array<string> */
     private array $loadOrder = [];
 
+    public function __construct()
+    {
+        $this->registerDefaultPlugins();
+    }
+
+    private function registerDefaultPlugins(): void
+    {
+        $this->registerPlugin('if', new IfPlugin(), '1.0.0');
+        $this->registerPlugin('switch', new SwitchPlugin(), '1.0.0');
+        $this->registerPlugin('while', new WhilePlugin(), '1.0.0');
+        $this->registerPlugin('for', new ForPlugin(), '1.0.0');
+        $this->registerPlugin('foreach', new ForeachPlugin(), '1.0.0');
+        $this->registerPlugin('match', new MatchPlugin(), '1.0.0');
+    }
+
     /**
      * Register a new plugin.
      *
