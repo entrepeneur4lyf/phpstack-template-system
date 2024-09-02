@@ -5,7 +5,7 @@ use phpStack\TemplateSystem\Core\Template\HtmxComponents;
 use phpStack\TemplateSystem\Core\Template\TemplateEngine;
 use phpStack\TemplateSystem\Core\Template\HtmxConfig;
 use phpStack\TemplateSystem\Core\Template\HtmxViewHelper;
-use phpStack\TemplateSystem\Core\Plugins\HtmxPluginManager;
+use phpStack\TemplateSystem\Core\Plugins\PluginManager;
 use phpStack\TemplateSystem\Core\Plugins\HtmxPluginInterface;
 
 class HtmxAdvancedFeaturesTest extends TestCase
@@ -21,7 +21,7 @@ class HtmxAdvancedFeaturesTest extends TestCase
         $this->config = new HtmxConfig();
         HtmxComponents::registerAll($this->engine, $this->config);
         $this->htmxHelper = new HtmxViewHelper($this->config);
-        $this->pluginManager = new HtmxPluginManager();
+        $this->pluginManager = new PluginManager();
     }
 
     public function testHtmxViewHelper()

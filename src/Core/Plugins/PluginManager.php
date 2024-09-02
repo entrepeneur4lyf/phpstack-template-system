@@ -7,6 +7,17 @@ namespace phpStack\TemplateSystem\Core\Plugins;
 use RuntimeException;
 use phpStack\TemplateSystem\Core\Template\PluginInterface;
 use phpStack\TemplateSystem\Core\Exceptions\PluginConflictException;
+use phpStack\TemplateSystem\Core\Plugins\IfPlugin;
+use phpStack\TemplateSystem\Core\Plugins\ForPlugin;
+use phpStack\TemplateSystem\Core\Plugins\SwitchPlugin;
+use phpStack\TemplateSystem\Core\Plugins\WhilePlugin;
+use phpStack\TemplateSystem\Core\Plugins\ForeachPlugin;
+use phpStack\TemplateSystem\Core\Plugins\MatchPlugin;
+
+interface HtmxPluginInterface extends PluginInterface
+{
+    public function processHtmxContent(string $content): string;
+}
 
 /**
  * PluginManager class for managing plugins in the template system.
@@ -347,6 +358,22 @@ class PluginManager
         $sandbox = new PluginSandbox();
         return $sandbox->run($pluginName, $callback, $args);
     }
+
+    /**
+     * Apply all registered HTMX plugins to the given content.
+     *
+     * @param string $content The content to process.
+     * @return string The processed content after applying all HTMX plugins.
+     */
+    public function applyHtmxPlugins(string $content): string
+    {
+        foreach ($this->getAll() as $plugin) {
+            if ($plugin instanceof HtmxPluginInterface) {
+                $content = $plugin->processHtmxContent($content);
+            }
+        }
+        return $content;
+    }
 }
 
 /**
@@ -376,9 +403,10 @@ class PluginSandbox
         $disabledFunctions = array_diff(get_defined_functions()['internal'], $this->allowedFunctions);
         
         // Disable potentially dangerous functions
-        foreach ($disabledFunctions as $function) {
-            // disable_function($function); // This function does not exist
-        }
+        // Note: disable_function and enable_function do not exist in PHP, so we will remove these lines.
+        // foreach ($disabledFunctions as $function) {
+        //     disable_function($function);
+        // }
 
         // Set memory and execution time limits
         ini_set('memory_limit', '32M');
@@ -392,9 +420,9 @@ class PluginSandbox
             $result = null;
         } finally {
             // Re-enable functions and reset limits
-            foreach ($disabledFunctions as $function) {
-                // enable_function($function); // This function does not exist
-            }
+            // foreach ($disabledFunctions as $function) {
+            //     enable_function($function);
+            // }
             ini_restore('memory_limit');
             set_time_limit(0); // Reset to unlimited
         }

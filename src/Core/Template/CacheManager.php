@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace phpStack\Core\Template;
+
+use phpStack\Core\Cache\LocalCache;
+use phpStack\Core\Cache\DistributedCache;
 
 /**
  * Class CacheManager
@@ -9,18 +14,18 @@ namespace phpStack\Core\Template;
  */
 class CacheManager
 {
-    private $localCache;
-    private $distributedCache;
-    private $useDistributedCache;
+    private LocalCache $localCache;
+    private DistributedCache $distributedCache;
+    private bool $useDistributedCache;
 
     /**
      * CacheManager constructor.
      *
-     * @param ComponentCache $localCache The local cache instance.
+     * @param LocalCache $localCache The local cache instance.
      * @param DistributedCache $distributedCache The distributed cache instance.
      * @param bool $useDistributedCache Whether to use distributed cache.
      */
-    public function __construct(ComponentCache $localCache, DistributedCache $distributedCache, bool $useDistributedCache = false)
+    public function __construct(LocalCache $localCache, DistributedCache $distributedCache, bool $useDistributedCache = true)
     {
         $this->localCache = $localCache;
         $this->distributedCache = $distributedCache;
@@ -33,7 +38,7 @@ class CacheManager
      * @param string $key The cache key.
      * @return mixed|null The cached value or null if not found.
      */
-    public function get(string $key)
+    public function get(string $key): mixed
     {
         if ($this->useDistributedCache) {
             return $this->distributedCache->get($key);
@@ -48,12 +53,12 @@ class CacheManager
      * @param mixed $value The value to cache.
      * @param int $ttl Time-to-live in seconds.
      */
-    public function set(string $key, $value, int $ttl = 3600): void
+    public function set(string $key, mixed $value, int $ttl = 3600): void
     {
         if ($this->useDistributedCache) {
             $this->distributedCache->set($key, $value, $ttl);
         } else {
-            $this->localCache->set($key, $value);
+            $this->localCache->set($key, $value, $ttl);
         }
     }
 

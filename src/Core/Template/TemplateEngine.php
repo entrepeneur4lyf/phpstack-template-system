@@ -4,7 +4,7 @@ namespace phpStack\TemplateSystem\Core\Template;
 
 use phpStack\TemplateSystem\Core\Template\Plugins\ComponentPlugin;
 use Psr\Cache\CacheItemPoolInterface;
-use phpStack\TemplateSystem\Core\Plugins\HtmxPluginManager;
+use phpStack\TemplateSystem\Core\Plugins\PluginManager;
 
 /**
  * Class TemplateEngine
@@ -23,7 +23,7 @@ class TemplateEngine
     private array $extensions = [];
     /** @var array<string, callable> */
     private array $requestHandlers = [];
-    private HtmxPluginManager $htmxPluginManager;
+    private PluginManager $PluginManager;
     private TemplateParser $parser;
     private TemplateRenderer $renderer;
     private BuildSystem $buildSystem;
@@ -37,7 +37,7 @@ class TemplateEngine
      * @param PerformanceProfiler $profiler The profiler for performance measurement.
      * @param CacheManager $cacheManager The cache manager for caching templates.
      * @param ComponentPlugin $componentPlugin The component plugin for managing components.
-     * @param HtmxPluginManager $htmxPluginManager The HTMX plugin manager.
+     * @param PluginManager $PluginManager The HTMX plugin manager.
      * @param TemplateParser $parser The parser for parsing templates.
      * @param TemplateRenderer $renderer The renderer for rendering templates.
      * @param BuildSystem $buildSystem The build system for building templates.
@@ -48,7 +48,7 @@ class TemplateEngine
         PerformanceProfiler $profiler,
         CacheManager $cacheManager,
         ComponentPlugin $componentPlugin,
-        HtmxPluginManager $htmxPluginManager,
+        PluginManager $PluginManager,
         TemplateParser $parser,
         TemplateRenderer $renderer,
         BuildSystem $buildSystem,
@@ -58,7 +58,7 @@ class TemplateEngine
         $this->profiler = $profiler;
         $this->cacheManager = $cacheManager;
         $this->componentPlugin = $componentPlugin;
-        $this->htmxPluginManager = $htmxPluginManager;
+        $this->PluginManager = $PluginManager;
         $this->parser = $parser;
         $this->renderer = $renderer;
         $this->buildSystem = $buildSystem;
@@ -258,7 +258,7 @@ class TemplateEngine
      */
     public function executePlugin(string $name, array $args, array $data)
     {
-        $plugin = $this->htmxPluginManager->getPlugin($name);
+        $plugin = $this->PluginManager->getPlugin($name);
         if ($plugin instanceof PluginInterface) {
             return $plugin->execute($args, $data);
         }

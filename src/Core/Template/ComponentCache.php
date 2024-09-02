@@ -1,40 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace phpStack\Core\Template;
+
+use phpStack\Core\Cache\CacheInterface;
 
 /**
  * Class ComponentCache
  *
- * Caches components to optimize rendering.
+ * Manages caching for individual components.
  */
 class ComponentCache
 {
-    private $cache = [];
-    private $ttl;
+    private CacheInterface $cache;
+    private int $ttl;
 
-    public function __construct(int $ttl = 3600)
+    /**
+     * ComponentCache constructor.
+     *
+     * @param CacheInterface $cache The cache instance.
+     * @param int $ttl Time-to-live in seconds.
+     */
+    public function __construct(CacheInterface $cache, int $ttl = 3600)
     {
+        $this->cache = $cache;
         $this->ttl = $ttl;
     }
 
-    public function get(string $key)
+    /**
+     * Retrieves a cached value.
+     *
+     * @param string $key The cache key.
+     * @return mixed|null The cached value or null if not found.
+     */
+    public function get(string $key): mixed
     {
-        if (isset($this->cache[$key]) && $this->cache[$key]['expires'] > time()) {
-            return $this->cache[$key]['value'];
-        }
-        return null;
+        return $this->cache->get($key);
     }
 
-    public function set(string $key, $value): void
+    /**
+     * Stores a value in the cache.
+     *
+     * @param string $key The cache key.
+     * @param mixed $value The value to cache.
+     */
+    public function set(string $key, mixed $value): void
     {
-        $this->cache[$key] = [
-            'value' => $value,
-            'expires' => time() + $this->ttl
-        ];
-    }
-
-    public function generateCacheKey(string $componentName, array $args): string
-    {
-        return $componentName . '_' . md5(serialize($args));
+        $this->cache->set($key, $value, $this->ttl);
     }
 }

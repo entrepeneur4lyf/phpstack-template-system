@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace phpStack\Core\Template;
 
-use Composer\Autoload\ClassLoader;
+use phpStack\Core\Template\TemplateEngine;
+use phpStack\Core\Exceptions\ComponentNotFoundException;
 
 /**
  * Class ComponentLibrary
@@ -11,14 +14,23 @@ use Composer\Autoload\ClassLoader;
  */
 class ComponentLibrary
 {
-    private $templateEngine;
-    private $componentDirectories = [];
-    private $components = [];
-    private $externalComponents = [];
+    private TemplateEngine $templateEngine;
+    private array $componentDirectories;
+    private array $components;
+    private array $externalComponents;
 
-    public function __construct(TemplateEngine $templateEngine)
+    /**
+     * ComponentLibrary constructor.
+     *
+     * @param TemplateEngine $templateEngine The template engine instance.
+     * @param array $componentDirectories The directories to search for components.
+     */
+    public function __construct(TemplateEngine $templateEngine, array $componentDirectories = [])
     {
         $this->templateEngine = $templateEngine;
+        $this->componentDirectories = $componentDirectories;
+        $this->components = [];
+        $this->externalComponents = [];
     }
 
     public function addComponentDirectory(string $directory): void

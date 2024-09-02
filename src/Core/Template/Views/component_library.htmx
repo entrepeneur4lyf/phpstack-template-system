@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Library</title>
+    <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        .container { display: flex; }
+        .sidebar { width: 200px; padding-right: 20px; }
+        .main { flex-grow: 1; }
+    </style>
+</head>
+<body>
+    <h1>Component Library</h1>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Components</h2>
+            <ul>
+                {[ for(items=$components, as='component') ]}
+                    <li>
+                        <a href="#" hx-get="/component-preview?name={$component}" hx-target="#preview">
+                            {$component}
+                        </a>
+                    </li>
+                {[ /for ]}
+            </ul>
+        </div>
+        <div class="main">
+            <div id="preview">
+                Select a component to preview
+            </div>
+        </div>
+    </div>
+</body>
+</html>

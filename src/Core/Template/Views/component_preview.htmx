@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Preview: {$componentName}</title>
+    <style>
+        {$styles}
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="editor">
+            <h2>Edit {$componentName}</h2>
+            <form id="preview-form" hx-post="/preview-component" hx-target="#designer-content">
+                <input type="hidden" name="name" value="{$componentName}">
+                <textarea id="code-editor" name="code">{$componentCode}</textarea>
+                <h3>Arguments:</h3>
+                {[ for(items=$componentArgs, as='arg', key='argName') ]}
+                    <div>
+                        <label for="{$argName}">{$argName}:</label>
+                        <input type="text" id="{$argName}" name="args[{$argName}]" value="{$arg}">
+                    </div>
+                {[ /for ]}
+            </form>
+        </div>
+        <div class="preview">
+            <h2>Preview</h2>
+            <div class="component-preview">
+                {$renderedComponent}
+            </div>
+            <h3>Generated HTML:</h3>
+            <pre><code>{[ htmlspecialchars($renderedComponent) ]}</code></pre>
+        </div>
+    </div>
+    <script>
+        {$scripts}
+    </script>
+</body>
+</html>

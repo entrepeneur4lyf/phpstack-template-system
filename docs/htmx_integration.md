@@ -35,7 +35,7 @@ The HTMX integration consists of several core components:
 1. `HtmxComponents`: The main class that registers all HTMX-related functionality with the TemplateEngine.
 2. `HtmxConfig`: Manages configuration options for HTMX.
 3. `HtmxComponent`: Base class for all HTMX-specific components.
-4. `HtmxPluginManager`: Manages HTMX-specific plugins.
+4. `PluginManager`: Manages HTMX-specific plugins.
 5. `HtmxViewHelper`: Provides helper methods for common HTMX-related operations in views.
 
 ## Basic Usage

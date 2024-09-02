@@ -28,6 +28,11 @@ class ComposerStaticInit519f06e57fc5cb1805d34f711afc137b
             'Psr\\Cache\\' => 10,
             'PhpParser\\' => 10,
         ),
+        'M' => 
+        array (
+            'MatthiasMullie\\PathConverter\\' => 29,
+            'MatthiasMullie\\Minify\\' => 22,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -66,6 +71,14 @@ class ComposerStaticInit519f06e57fc5cb1805d34f711afc137b
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'MatthiasMullie\\PathConverter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/path-converter/src',
+        ),
+        'MatthiasMullie\\Minify\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/minify/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

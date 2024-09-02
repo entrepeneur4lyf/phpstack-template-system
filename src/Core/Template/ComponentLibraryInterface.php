@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace phpStack\Core\Template;
 
 /**
@@ -9,8 +11,8 @@ namespace phpStack\Core\Template;
  */
 class ComponentLibraryInterface
 {
-    private $templateEngine;
-    private $componentLibrary;
+    private TemplateEngine $templateEngine;
+    private ComponentLibrary $componentLibrary;
 
     public function __construct(TemplateEngine $templateEngine, ComponentLibrary $componentLibrary)
     {
@@ -28,10 +30,21 @@ class ComponentLibraryInterface
 
     public function renderComponentPreview(string $componentName): string
     {
-        // This is a simple preview. You might want to add more sophisticated preview logic.
+        $component = $this->componentLibrary->getComponent($componentName);
+
+        if ($component === null) {
+            throw new \RuntimeException("Component not found: $componentName");
+        }
+
+        $renderedComponent = call_user_func($component['render']);
+        $styles = $component['style'] ?? '';
+        $scripts = $component['script'] ?? '';
+
         return $this->templateEngine->render('component_preview.htmx', [
             'componentName' => $componentName,
-            'componentCode' => "Component preview for {$componentName}",
+            'componentCode' => $renderedComponent,
+            'styles' => $styles,
+            'scripts' => $scripts,
         ]);
     }
 }
