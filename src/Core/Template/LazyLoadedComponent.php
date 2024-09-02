@@ -15,13 +15,20 @@ class LazyLoadedComponent
     /** @var mixed */
     private $component;
 
+    /**
+     * LazyLoadedComponent constructor.
+     *
+     * @param callable $loader A callable that loads the component.
+     */
     public function __construct(callable $loader)
     {
         $this->loader = $loader;
     }
 
     /**
-     * @return mixed
+     * Loads the component if it hasn't been loaded yet.
+     *
+     * @return mixed The loaded component.
      */
     public function load()
     {
