@@ -10,6 +10,9 @@ use Psr\Cache\CacheItemPoolInterface;
 use Fiber;
 use phpStack\TemplateSystem\Core\Exceptions\ErrorHandler;
 
+/**
+ * ComponentPlugin class for managing and rendering components in the template system.
+ */
 class ComponentPlugin implements PluginInterface
 {
     /** @var array<string, array{component: callable|LazyLoadedComponent, style: ?string, script: ?string, events: array, dependencies: array}> */
@@ -30,6 +33,15 @@ class ComponentPlugin implements PluginInterface
     private ErrorHandler $errorHandler;
     private DebugManager $debugManager;
 
+    /**
+     * ComponentPlugin constructor.
+     *
+     * @param PerformanceProfiler $profiler Performance profiler instance
+     * @param CacheManager $cacheManager Cache manager instance
+     * @param PluginSandbox $sandbox Plugin sandbox instance
+     * @param DebugManager $debugManager Debug manager instance
+     * @param ErrorHandler $errorHandler Error handler instance
+     */
     public function __construct(
         PerformanceProfiler $profiler,
         CacheManager $cacheManager,
@@ -44,6 +56,14 @@ class ComponentPlugin implements PluginInterface
         $this->errorHandler = $errorHandler;
     }
 
+    /**
+     * Execute the component plugin.
+     *
+     * @param array $args Arguments passed to the plugin
+     * @param array $data Data context for the plugin execution
+     * @return string|Fiber|null The rendered component content, a Fiber for async execution, or null on error
+     * @throws \RuntimeException If required arguments are missing or component is not registered
+     */
     public function execute(array $args, array $data)
     {
         $name = $args['name'] ?? null;
@@ -105,6 +125,14 @@ class ComponentPlugin implements PluginInterface
         }
     }
 
+    /**
+     * Execute an optimized component.
+     *
+     * @param string $name Component name
+     * @param array $args Component arguments
+     * @param array $data Data context
+     * @return string|null Rendered component or null on error
+     */
     private function executeOptimizedComponent(string $name, array $args, array $data): ?string
     {
         $optimizedComponentPath = $this->optimizedComponentsDir . '/' . $name . '.php';
@@ -124,6 +152,16 @@ class ComponentPlugin implements PluginInterface
         }
     }
 
+    /**
+     * Register a new component.
+     *
+     * @param string $name Component name
+     * @param callable $component Component callable
+     * @param string|null $style Component style
+     * @param string|null $script Component script
+     * @param array $events Component events
+     * @param array $dependencies Component dependencies
+     */
     public function register(string $name, callable $component, ?string $style = null, ?string $script = null, array $events = [], array $dependencies = []): void
     {
         $this->components[$name] = [
@@ -147,11 +185,23 @@ class ComponentPlugin implements PluginInterface
         }
     }
 
+    /**
+     * Register a lazy-loaded component.
+     *
+     * @param string $name Component name
+     * @param callable $loader Lazy loader function
+     */
     public function registerLazy(string $name, callable $loader): void
     {
         $this->components[$name]['component'] = new LazyLoadedComponent($loader);
     }
 
+    /**
+     * Resolve dependencies for a component.
+     *
+     * @param string $name Component name
+     * @return array Resolved dependencies
+     */
     private function resolveDependencies(string $name): array
     {
         $dependencyResults = [];
@@ -165,6 +215,14 @@ class ComponentPlugin implements PluginInterface
         return $dependencyResults;
     }
 
+    /**
+     * Render a component on the server side.
+     *
+     * @param string $name Component name
+     * @param string $content Component content
+     * @param bool $useShadowDom Whether to use Shadow DOM
+     * @return string Rendered component
+     */
     private function serverSideRender(string $name, string $content, bool $useShadowDom): string
     {
         $style = $this->styles[$name] ?? '';
@@ -196,6 +254,14 @@ class ComponentPlugin implements PluginInterface
         return "{$styleTag}{$renderedContent}{$scriptTag}{$eventScript}";
     }
 
+    /**
+     * Render a component on the client side.
+     *
+     * @param string $name Component name
+     * @param string $content Component content
+     * @param bool $useShadowDom Whether to use Shadow DOM
+     * @return string Rendered component
+     */
     private function clientSideRender(string $name, string $content, bool $useShadowDom): string
     {
         $placeholder = "<div id=\"component-{$name}-placeholder\"></div>";
@@ -226,16 +292,35 @@ class ComponentPlugin implements PluginInterface
         return "{$placeholder}{$renderScript}{$script}{$eventScript}";
     }
 
+    /**
+     * Generate a cache key for a component.
+     *
+     * @param string $name Component name
+     * @param array $args Component arguments
+     * @return string Cache key
+     */
     private function generateCacheKey(string $name, array $args): string
     {
         return md5($name . serialize($args));
     }
 
+    /**
+     * Get plugin dependencies.
+     *
+     * @return array Plugin dependencies
+     */
     public function getDependencies(): array
     {
         return [];
     }
 
+    /**
+     * Apply component-specific options.
+     *
+     * @param string $name Component name
+     * @param array $options Component options
+     * @return string Applied component content
+     */
     public function applyToComponent(string $name, array $options): string
     {
         if (!isset($this->components[$name])) {
@@ -267,6 +352,12 @@ class ComponentPlugin implements PluginInterface
         return $output;
     }
 
+    /**
+     * Process HTMX-specific content.
+     *
+     * @param string $content Content to process
+     * @return string Processed content
+     */
     public function processHtmxContent(string $content): string
     {
         // Process HTMX-specific attributes
@@ -297,6 +388,11 @@ class ComponentPlugin implements PluginInterface
         return $content;
     }
 
+    /**
+     * Enable the use of optimized components.
+     *
+     * @param string $outputDir Directory for optimized components
+     */
     public function useOptimizedComponents(string $outputDir): void
     {
         $this->optimizedComponentsDir = $outputDir;
