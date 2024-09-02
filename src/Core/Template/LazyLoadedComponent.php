@@ -9,10 +9,14 @@ namespace phpStack\TemplateSystem\Core\Template;
  */
 class LazyLoadedComponent
 {
-    /** @var callable */
+    /**
+     * @var callable A callable responsible for loading the component.
+     */
     private $loader;
 
-    /** @var mixed */
+    /**
+     * @var mixed The loaded component instance.
+     */
     private $component;
 
     /**
@@ -28,7 +32,9 @@ class LazyLoadedComponent
     /**
      * Loads the component if it hasn't been loaded yet.
      *
-     * @return mixed The loaded component.
+     * Loads the component if it hasn't been loaded yet.
+     *
+     * @return mixed The loaded component instance.
      */
     public function load()
     {

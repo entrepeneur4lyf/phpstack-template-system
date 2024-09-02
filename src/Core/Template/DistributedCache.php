@@ -11,13 +11,18 @@ use Redis;
  */
 class DistributedCache
 {
-    private $redis;
+    /**
+     * @var Redis The Redis client instance for managing cache.
+     */
+    private Redis $redis;
 
     /**
      * DistributedCache constructor.
      *
-     * @param string $host The Redis host.
-     * @param int $port The Redis port.
+     * DistributedCache constructor.
+     *
+     * @param string $host The Redis host address.
+     * @param int $port The Redis port number.
      */
     public function __construct(string $host = 'localhost', int $port = 6379)
     {
@@ -29,7 +34,10 @@ class DistributedCache
      * Retrieves a value from the cache.
      *
      * @param string $key The cache key.
-     * @return mixed|null The cached value or null if not found.
+     * Retrieves a value from the cache.
+     *
+     * @param string $key The cache key.
+     * @return mixed|null The cached value or null if the key does not exist.
      */
     public function get(string $key)
     {
@@ -42,7 +50,7 @@ class DistributedCache
      *
      * @param string $key The cache key.
      * @param mixed $value The value to cache.
-     * @param int $ttl Time-to-live in seconds.
+     * @param int $ttl Time-to-live in seconds for the cached item.
      */
     public function set(string $key, $value, int $ttl = 3600): void
     {
@@ -53,7 +61,10 @@ class DistributedCache
      * Checks if a cache key exists.
      *
      * @param string $key The cache key.
-     * @return bool True if the key exists, false otherwise.
+     * Checks if a cache key exists.
+     *
+     * @param string $key The cache key.
+     * @return bool True if the key exists in the cache, false otherwise.
      */
     public function has(string $key): bool
     {
@@ -61,7 +72,7 @@ class DistributedCache
     }
 
     /**
-     * Clears all cache entries.
+     * Clears all entries from the cache.
      */
     public function clear(): void
     {
