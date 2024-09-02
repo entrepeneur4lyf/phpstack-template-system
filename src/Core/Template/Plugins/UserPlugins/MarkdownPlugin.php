@@ -147,6 +147,53 @@ class MarkdownPlugin implements HtmxPluginInterface
         return str_replace(array_keys($specialChars), array_values($specialChars), $text);
     }
 
+    public function htmlToMarkdown(string $html): string
+    {
+        $dom = new \DOMDocument();
+        @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $markdown = $this->convertNode($dom->documentElement);
+        return trim($markdown);
+    }
+
+    private function convertNode(\DOMNode $node): string
+    {
+        $markdown = '';
+
+        if ($node->nodeType === XML_TEXT_NODE) {
+            return $this->escapeSpecialCharacters($node->nodeValue);
+        }
+
+        $tag = strtolower($node->nodeName);
+
+        if (isset($this->htmlToMarkdownMap[$tag])) {
+            $prefix = $this->htmlToMarkdownMap[$tag];
+            $suffix = in_array($tag, ['strong', 'em', 'code']) ? $prefix : '';
+
+            if ($tag === 'a') {
+                $href = $node->getAttribute('href');
+                $markdown .= sprintf($prefix, $this->convertChildNodes($node), $href);
+            } elseif ($tag === 'pre') {
+                $markdown .= $prefix . "\n" . $this->convertChildNodes($node) . "\n" . $prefix . "\n";
+            } else {
+                $markdown .= $prefix . $this->convertChildNodes($node) . $suffix . "\n";
+            }
+        } else {
+            $markdown .= $this->convertChildNodes($node);
+        }
+
+        return $markdown;
+    }
+
+    private function convertChildNodes(\DOMNode $node): string
+    {
+        $markdown = '';
+        foreach ($node->childNodes as $childNode) {
+            $markdown .= $this->convertNode($childNode);
+        }
+        return $markdown;
+    }
+
     public function execute(array $args, array $data) { /* ... */ }
     public function getDependencies(): array { return []; }
     public function applyToComponent(string $name, array $options): string { return ''; }
