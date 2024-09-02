@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 
 use GuzzleHttp\Client;
-use phpStack\TemplateSystem\Examples\Plugins\MarkdownPlugin;
+use phpStack\TemplateSystem\Core\Template\Plugins\UserPlugins\MarkdownPlugin;
 
 function fetchHtmlContent(string $url): string
 {
