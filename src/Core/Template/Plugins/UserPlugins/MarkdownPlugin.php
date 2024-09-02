@@ -2,9 +2,9 @@
 
 namespace phpStack\TemplateSystem\Examples\Plugins;
 
-use phpStack\TemplateSystem\Core\Plugins\HtmxPluginInterface;
+use phpStack\TemplateSystem\Core\Plugins\PluginInterface;
 
-class MarkdownPlugin implements HtmxPluginInterface
+class MarkdownPlugin implements PluginInterface
 {
     private $htmlToMarkdownMap = [
         'h1' => '# ',
