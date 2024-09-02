@@ -116,6 +116,18 @@ class ComponentDesigner
         return $pluginOutput;
     }
 
+    public function applyToComponent(string $name, array $options): string
+    {
+        // Implementation for PluginInterface
+        return '';
+    }
+
+    public function getDependencies(): array
+    {
+        // Implementation for PluginInterface
+        return [];
+    }
+
     /**
      * Generates lifecycle hooks for a component.
      *
