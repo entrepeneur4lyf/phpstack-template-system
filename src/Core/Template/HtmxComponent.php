@@ -9,6 +9,11 @@ namespace phpStack\TemplateSystem\Core\Template;
  */
 abstract class HtmxComponent extends HtmxBaseComponent
 {
+    /**
+     * Adds HTMX attributes to the given arguments array.
+     *
+     * @param array<string, mixed> $args The arguments array to modify.
+     */
     protected static function addHtmxAttributes(array &$args): void
     {
         $htmxAttributes = [
