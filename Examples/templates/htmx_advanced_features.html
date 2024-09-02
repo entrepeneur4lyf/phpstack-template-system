@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMX Advanced Features Example</title>
+    {{htmx_script}}
+    {{htmx_config}}
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>HTMX Advanced Features Example</h1>
+    
+    <h2>Live Search</h2>
+    {{search_form}}
+    <div class="htmx-indicator">Searching...</div>
+    {{search_results}}
+    
+    <h2>Infinite Scroll</h2>
+    {{infinite_scroll}}
+    {{content_list}}
+    
+    <h2>Custom Plugin: Current Time</h2>
+    {{time_button}}
+    {{time_display}}
+    
+    <script>
+        htmx.logger = function(elt, event, data) {
+            if(console) {
+                console.log(event, elt, data);
+            }
+        }
+        htmx.logAll();
+    </script>
+</body>
+</html>

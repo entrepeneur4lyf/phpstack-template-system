@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom HTMX Components Example</title>
+    {{htmx_script}}
+    {{htmx_config}}
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: block; }
+        .htmx-request.htmx-indicator { display: block; }
+    </style>
+</head>
+<body>
+    <h1>Custom HTMX Components Example</h1>
+    
+    <h2>Custom Search Component</h2>
+    {{custom_search}}
+    
+    <h2>Infinite Scroll List Component</h2>
+    {{infinite_scroll_list}}
+</body>
+</html>

@@ -1,0 +1,26 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    excludePaths:
+        - tests
+    ignoreErrors:
+        - message: '#Static property .+ is never read, only written\.#'
+          path: src/Core/Template/HtmxComponents.php
+        - message: '#Negated boolean expression is always false\.#'
+          path: src/Core/Plugins/PluginManager.php
+        - message: '#Result of \|\| is always false\.#'
+          path: src/Core/Plugins/PluginManager.php
+        - message: '#Offset .+ on array.+ in isset\(\) always exists and is not nullable\.#'
+          path: src/Core/Plugins/PluginManager.php
+        - message: '#Call to function is_array\(\) with mixed will always evaluate to false\.#'
+          path: src/Core/Template/ComponentDesigner.php
+        - message: '#Result of && is always false\.#'
+          path: src/Core/Template/ComponentDesigner.php
+        - message: '#Method .+::render\(\) has parameter \$data with no type specified\.#'
+          path: src/Core/Template/Components.php
+        - message: '#Class .+ referenced with incorrect case: .+#'
+          path: src/Core/Template/HtmxComponents.php
+        - message: '#parameter \$.+ with no value type specified in iterable type array\.#'
+        - message: '#return type has no value type specified in iterable type array\.#'
+        - message: '#type has no value type specified in iterable type array\.#'

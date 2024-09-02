@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Markdown Plugin Example</title>
+    {{htmx_script}}
+    {{htmx_config}}
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: block; }
+        .markdown-content { border: 1px solid #ccc; padding: 15px; margin: 15px 0; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        blockquote { border-left: 3px solid #ccc; padding-left: 10px; color: #666; }
+        table { border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Enhanced Markdown Plugin Example</h1>
+    
+    <h2>Static Markdown Content</h2>
+    <div class="markdown-content">
+        {{static_markdown_content}}
+    </div>
+    
+    <h2>Dynamic Markdown Content</h2>
+    <div class="markdown-content">
+        {{dynamic_markdown_content}}
+    </div>
+    
+    <script>
+        htmx.on('#dynamic-markdown-content', 'htmx:afterSettle', function(event) {
+            console.log('Dynamic Markdown content loaded and processed');
+        });
+    </script>
+</body>
+</html>

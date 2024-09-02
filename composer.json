@@ -1,0 +1,51 @@
+{
+    "name": "phpstack/template-system",
+    "description": "A flexible template, component, and plugin system with HTMX integration for PHP applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PHPStack Team",
+            "email": "team@phpstack.dev"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "psr/cache": "^1.0|^2.0|^3.0",
+        "psr/http-message": "^1.0|^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "phpStack\\TemplateSystem\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "phpStack\\TemplateSystem\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "suggest": {
+        "ext-fileinfo": "Required for determining file mime types"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse -c phpstan.neon"
+    },
+    "provide": {
+        "phpstack-template-system/phpstack-template-system.php": "1.0"
+    }
+}
