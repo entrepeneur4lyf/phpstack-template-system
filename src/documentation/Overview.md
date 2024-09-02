@@ -1,39 +1,87 @@
 # Overview
 
-The phpStack Template System is a comprehensive and flexible framework designed to enhance PHP web development by providing a robust system for managing templates, components, and plugins. This document provides an in-depth overview of the system's architecture, its key components, and how they work together to deliver a powerful template system. The system is built to be modular, allowing developers to extend and customize its functionality through plugins and components. It integrates seamlessly with HTMX, a modern JavaScript library that facilitates dynamic content updates without requiring full page reloads. This integration allows developers to create highly interactive and responsive web applications.
+The phpStack Template System is a comprehensive and flexible framework designed to enhance PHP web development by providing a robust system for managing templates, components, and plugins. This document provides an in-depth overview of the system's architecture, its key components, and how they work together to deliver a powerful template system.
 
 ## Key Features
 
-- **Template Rendering**: The system provides efficient and flexible template rendering capabilities, allowing developers to create dynamic and responsive web pages. Templates can be rendered with dynamic data, enabling the creation of highly interactive user interfaces. The rendering process is optimized for performance, ensuring that even complex templates are processed quickly.
+### Template Rendering
+The system provides efficient and flexible template rendering capabilities, allowing developers to create dynamic and responsive web pages. 
 
-- **Component Management**: The framework supports reusable components, which can be lazily loaded and optimized for performance. This feature allows developers to build modular and maintainable codebases, where components can be reused across different parts of an application. Components can be customized and extended to meet the needs of specific applications, providing a high degree of flexibility.
+- **Dynamic Data Binding**: Templates can be rendered with dynamic data, enabling the creation of highly interactive user interfaces.
+- **Performance Optimization**: The rendering process is optimized for performance, ensuring that even complex templates are processed quickly.
+- **Template Parsing**: The `TemplateParser` class breaks down templates into manageable parts, separating static content from dynamic elements.
+- **Rendering Pipeline**: The `TemplateRenderer` class processes parsed templates, executing plugins and components as needed.
 
-- **Plugin System**: The plugin architecture is designed to be extensible, allowing developers to add custom functionality to the template system. With support for HTMX integration, plugins can enhance the interactivity and responsiveness of web applications by enabling dynamic content updates without full page reloads. The system manages plugin dependencies and conflicts, ensuring that plugins work together seamlessly.
+### Component Management
+The framework supports reusable components, which can be lazily loaded and optimized for performance.
 
-- **Caching**: To improve performance, the system offers both local and distributed caching strategies. Local caching is file-based, while distributed caching leverages Redis to store cached data across multiple servers, ensuring fast access to frequently used data. The caching system is designed to be transparent, requiring minimal configuration while providing significant performance benefits.
+- **Lazy Loading**: Components can be loaded on-demand, reducing initial load times.
+- **Component Library**: The `ComponentLibrary` class manages a collection of reusable components.
+- **Custom Components**: Developers can create and register custom components to extend functionality.
+- **HTMX Integration**: Built-in support for HTMX attributes in components, enabling dynamic updates without full page reloads.
 
-- **Security**: The system includes a sandbox environment for executing plugins safely. This environment restricts access to certain PHP functions and classes, ensuring that plugins cannot perform unauthorized actions or access sensitive data. The security model is designed to be robust, protecting both the application and its users from potential threats.
+### Plugin System
+The plugin architecture is designed to be extensible, allowing developers to add custom functionality to the template system.
 
-- **Debugging and Profiling**: The framework provides tools for monitoring and optimizing performance. Developers can use these tools to track component hierarchies, measure render times, and identify bottlenecks in the application. The profiling tools are integrated into the system, providing real-time insights into application performance.
+- **Plugin Manager**: The `PluginManager` class handles plugin registration, dependency management, and execution.
+- **Conflict Resolution**: Built-in mechanisms for resolving conflicts between plugins.
+- **Sandboxed Execution**: Plugins are executed in a controlled environment to ensure security.
+- **Hook System**: Plugins can register hooks to modify or extend core functionality.
+
+### Caching
+To improve performance, the system offers both local and distributed caching strategies.
+
+- **Local Caching**: File-based caching for single-server setups.
+- **Distributed Caching**: Redis-based caching for multi-server environments.
+- **Cache Manager**: The `CacheManager` class provides a unified interface for different caching strategies.
+- **Automatic Cache Invalidation**: Smart cache invalidation to ensure data consistency.
+
+### Security
+The system includes robust security measures to protect applications and users.
+
+- **Plugin Sandbox**: The `PluginSandbox` class restricts plugin access to sensitive functions and resources.
+- **Input Validation**: Built-in mechanisms for validating and sanitizing user inputs.
+- **CSRF Protection**: Automatic CSRF token generation and validation for forms.
+- **Secure Configurations**: Sensible security defaults with options for customization.
+
+### Debugging and Profiling
+The framework provides comprehensive tools for monitoring and optimizing performance.
+
+- **Performance Profiler**: The `PerformanceProfiler` class tracks render times and resource usage.
+- **Debug Manager**: The `DebugManager` class offers detailed insights into component hierarchies and execution flow.
+- **Logging**: Integrated logging capabilities for tracking errors and important events.
+- **Development Mode**: Enhanced debugging features when running in a development environment.
 
 ## Architecture
 
-The phpStack Template System is built around a modular architecture, which allows developers to extend and customize its functionality through plugins and components. The system is designed to be highly flexible, enabling developers to tailor it to their specific needs. It integrates seamlessly with HTMX, a modern JavaScript library that facilitates dynamic content updates without requiring full page reloads. This integration allows developers to create highly interactive and responsive web applications.
+The phpStack Template System is built around a modular architecture, composed of several key components:
 
-The architecture is composed of several key components:
+1. **Template Engine**: The core class responsible for coordinating template rendering, component management, and plugin execution.
 
-- **Template Engine**: The core of the system, responsible for rendering templates and managing components. It provides an API for registering and rendering components, as well as executing plugins.
+2. **Component Library**: Manages the registration and retrieval of reusable UI components.
 
-- **Component Library**: A collection of reusable components that can be registered with the template engine. Components can be customized and extended to meet the needs of specific applications.
+3. **Plugin Manager**: Handles the lifecycle of plugins, including registration, dependency resolution, and execution.
 
-- **Plugin Manager**: Manages the registration and execution of plugins. It handles plugin dependencies, conflict resolution, and provides a sandbox environment for executing plugin code.
+4. **Cache Manager**: Provides a unified interface for various caching strategies to optimize performance.
 
-- **Cache Manager**: Manages caching for templates and components, providing both local and distributed caching options. It ensures that frequently used data is readily available, improving the performance of web applications.
+5. **HTMX Integration**: Seamlessly integrates with HTMX for enhanced interactivity without full page reloads.
 
-- **Performance Profiler**: A tool for monitoring the performance of template rendering. It tracks render times and provides insights into the performance of different components.
+6. **Build System**: Manages the compilation and optimization of templates and assets for production environments.
+
+7. **Security Layer**: Implements various security measures to protect against common vulnerabilities.
+
+8. **Debugging Tools**: Offers comprehensive debugging and profiling capabilities for development and troubleshooting.
 
 ## Getting Started
 
-To get started with the phpStack Template System, refer to the [Installation Guide](Installation.md) and [Usage Examples](UsageExamples.md). These resources provide step-by-step instructions for setting up the system and demonstrate how to use its features in your projects.
+To get started with the phpStack Template System, refer to the following resources:
 
-For more detailed information on configuring and using the system, refer to the [Configuration Guide](Configuration.md) and [Advanced Configuration](AdvancedConfiguration.md) documents.
+1. [Installation Guide](Installation.md): Step-by-step instructions for setting up the system in your project.
+2. [Usage Examples](UsageExamples.md): Practical examples demonstrating how to use various features of the system.
+3. [Configuration Guide](Configuration.md): Detailed information on configuring the system for your specific needs.
+4. [Advanced Configuration](AdvancedConfiguration.md): Explore advanced settings and optimizations for power users.
+5. [API Reference](API_Reference.md): Comprehensive documentation of all public classes and methods.
+6. [Plugin Development Guide](Plugin_Development.md): Learn how to create custom plugins to extend the system's functionality.
+7. [Security Best Practices](Security_Best_Practices.md): Guidelines for ensuring the security of your applications built with phpStack.
+
+By leveraging the power and flexibility of the phpStack Template System, developers can create robust, performant, and highly interactive web applications with ease.
