@@ -191,19 +191,18 @@ class HtmxComponents
 
     private function registerResponseHandlers(TemplateEngine $engine): void
     {
-        if (!method_exists($engine, 'registerResponseHandler')) {
-            throw new \RuntimeException("Method 'registerResponseHandler' not found in TemplateEngine");
+        if (method_exists($engine, 'registerResponseHandler')) {
+            $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
         }
-        $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
     }
 
     private function registerEventHandlers(TemplateEngine $engine): void
     {
         $engine->registerExtension('htmx-event-script', function(...$args) {
-            if (!class_exists(HtmxEventHandler::class) || !method_exists(HtmxEventHandler::class, 'getEventScript')) {
-                throw new \RuntimeException("HtmxEventHandler class or getEventScript method not found");
+            if (class_exists(HtmxEventHandler::class) && method_exists(HtmxEventHandler::class, 'getEventScript')) {
+                return HtmxEventHandler::getEventScript(...$args);
             }
-            return HtmxEventHandler::getEventScript(...$args);
+            return '';
         });
     }
 

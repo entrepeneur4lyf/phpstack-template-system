@@ -109,8 +109,12 @@ class ComponentDesigner
     {
         $pluginOutput = "";
         foreach ($this->pluginManager->getAll() as $pluginName => $plugin) {
-            if ($plugin instanceof PluginInterface && method_exists($plugin, 'applyToComponent')) {
-                $pluginOutput .= $plugin->applyToComponent($name, $options);
+            if ($plugin instanceof PluginInterface) {
+                if (method_exists($plugin, 'applyToComponent')) {
+                    $pluginOutput .= $plugin->applyToComponent($name, $options);
+                }
+            } elseif (is_callable($plugin)) {
+                $pluginOutput .= $plugin($name, $options);
             }
         }
         return $pluginOutput;
