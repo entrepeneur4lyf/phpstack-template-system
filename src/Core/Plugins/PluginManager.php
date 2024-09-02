@@ -321,7 +321,7 @@ class PluginManager
      * @param string $hookName The name of the hook to execute.
      * @param mixed ...$args Additional arguments to pass to the hook callbacks.
      */
-    public function executeHook(string $hookName, ...$args)
+    public function executeHook(string $hookName, ...$args): void
     {
         if (!isset($this->hooks[$hookName])) {
             return;
@@ -342,7 +342,7 @@ class PluginManager
      * @param array $args Additional arguments to pass to the callback.
      * @return mixed The result of the callback execution.
      */
-    private function executeSandboxed(string $pluginName, callable $callback, array $args)
+    private function executeSandboxed(string $pluginName, callable $callback, array $args): mixed
     {
         $sandbox = new PluginSandbox();
         return $sandbox->run($pluginName, $callback, $args);

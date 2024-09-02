@@ -13,6 +13,7 @@ class HtmxComponents
 {
     private HtmxConfig $config;
     /** @var array<callable> */
+    /** @var array<callable> */
     private array $beforeRequestHooks = [];
     /** @var array<callable> */
     private array $beforeRenderHooks = [];
@@ -76,7 +77,11 @@ class HtmxComponents
 
     public function updatePlugin(string $name, PluginInterface|callable $newPlugin, string $version): void
     {
-        $this->pluginManager->updatePlugin($name, $newPlugin, $version);
+        if (method_exists($this->pluginManager, 'updatePlugin')) {
+            $this->pluginManager->updatePlugin($name, $newPlugin, $version);
+        } else {
+            throw new \RuntimeException("Method 'updatePlugin' not found in PluginManager");
+        }
     }
 
     public function resolveConflicts(array $conflictingPlugins): void
@@ -169,12 +174,21 @@ class HtmxComponents
 
     private function registerResponseHandlers(TemplateEngine $engine): void
     {
-        $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
+        if (method_exists($engine, 'registerResponseHandler')) {
+            $engine->registerResponseHandler('htmx-response', [HtmxResponseHandler::class, 'addHeaders']);
+        } else {
+            throw new \RuntimeException("Method 'registerResponseHandler' not found in TemplateEngine");
+        }
     }
 
     private function registerEventHandlers(TemplateEngine $engine): void
     {
-        $engine->registerExtension('htmx-event-script', [HtmxEventHandler::class, 'getEventScript']);
+        $engine->registerExtension('htmx-event-script', function(...$args) {
+            if (class_exists(HtmxEventHandler::class) && method_exists(HtmxEventHandler::class, 'getEventScript')) {
+                return HtmxEventHandler::getEventScript(...$args);
+            }
+            throw new \RuntimeException("HtmxEventHandler class or getEventScript method not found");
+        });
     }
 
     private function registerJavaScriptAPI(TemplateEngine $engine): void

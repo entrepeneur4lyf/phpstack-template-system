@@ -52,7 +52,7 @@ class ComponentDesigner
                 $template .= $this->generateNestedComponent($optionName, $optionValue);
             } elseif ($optionName === 'attributes' && is_array($optionValue)) {
                 $template .= $this->generateAttributes($optionValue);
-            } elseif (is_scalar($optionValue) || is_null($optionValue)) {
+            } elseif (is_scalar($optionValue) || $optionValue === null) {
                 $template .= "    <{$optionName}>{{\${$optionName}}}</{$optionName}>\n";
             }
         }
