@@ -7,7 +7,7 @@ This tutorial will guide you through integrating HTMX with the phpStack Template
 First, make sure you've included the HTMX library in your HTML. You can do this by adding the following line to your `<head>` section:
 
 ```html
-<script src="https://unpkg.com/htmx.org@1.9.2"></script>
+<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
 ```
 
 ## Step 2: Create an HTMX-Enabled Component
