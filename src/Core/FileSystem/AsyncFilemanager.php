@@ -15,11 +15,11 @@ class AsyncFileManager
     }
 
     /**
-     * @return Fiber<string>
+     * @return Fiber<mixed, mixed, string, mixed>
      */
     public function readFile(string $filename): Fiber
     {
-        return new Fiber(function () use ($filename) {
+        return new Fiber(function () use ($filename): string {
             $cacheKey = 'file_' . $filename;
             $cachedContent = $this->fileCacheManager->get($cacheKey);
             if ($cachedContent !== null) {
@@ -46,11 +46,11 @@ class AsyncFileManager
     }
 
     /**
-     * @return Fiber<int>
+     * @return Fiber<mixed, mixed, int, mixed>
      */
     public function writeFile(string $filename, string $content): Fiber
     {
-        return new Fiber(function () use ($filename, $content) {
+        return new Fiber(function () use ($filename, $content): int {
             $handle = fopen($filename, 'wb');
             if ($handle === false) {
                 throw new \RuntimeException("Failed to open file for writing: $filename");

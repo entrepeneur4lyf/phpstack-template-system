@@ -32,13 +32,8 @@ class ComponentPlugin implements PluginInterface
     private bool $useOptimizedComponents = false;
     private ErrorHandler $errorHandler;
     private DebugManager $debugManager;
-
-    /** @var array<string, array{component: callable|LazyLoadedComponent, style: ?string, script: ?string, events: array<string, callable>, dependencies: array<string>}> */
-    private array $components = [];
-
-    /**
-     * ComponentPlugin constructor.
-     *
+    
+    /*
      * @param PerformanceProfiler $profiler Performance profiler instance
      * @param CacheManager $cacheManager Cache manager instance
      * @param PluginSandbox $sandbox Plugin sandbox instance

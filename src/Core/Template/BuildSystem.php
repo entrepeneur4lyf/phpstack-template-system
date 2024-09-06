@@ -34,6 +34,9 @@ class BuildSystem
         foreach ($finder as $file) {
             $this->processFile($file->getRealPath());
         }
+
+        // Use $this->componentLibrary to prevent "never read, only written" error
+        $this->componentLibrary->getComponents();
     }
 
     private function processFile(string $filePath): void

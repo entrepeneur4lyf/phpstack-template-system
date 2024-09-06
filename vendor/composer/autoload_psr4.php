@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'phpStack\\TemplateSystem\\Tests\\' => array($baseDir . '/tests'),
     'phpStack\\TemplateSystem\\' => array($baseDir . '/src'),
+    'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),

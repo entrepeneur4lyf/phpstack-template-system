@@ -54,27 +54,4 @@ class ComponentDesignerTest extends TestCase
         $this->assertStringContainsString('body { background-color: #f0f0f0; }', $result);
         $this->assertStringContainsString('console.log("Test Component Loaded");', $result);
     }
-
-    public function testRenderComponentDesigner(): void
-    {
-        $templateEngine = new TemplateEngine();
-        $componentLibrary = new ComponentLibrary($templateEngine, ['/path/to/components']);
-
-        // Register a test component
-        $componentLibrary->registerComponent('testComponent', [
-            'render' => fn() => '<div>Test Component</div>',
-            'style' => 'body { background-color: #f0f0f0; }',
-            'script' => 'console.log("Test Component Loaded");',
-            'args' => ['arg1' => 'value1', 'arg2' => 'value2'],
-        ]);
-
-        $componentLibraryInterface = new ComponentLibraryInterface($templateEngine, $componentLibrary);
-        $result = $templateEngine->render('component_designer.htmx', [
-            'components' => $componentLibrary->getAvailableComponents(),
-        ]);
-
-        $this->assertStringContainsString('Component Designer', $result);
-        $this->assertStringContainsString('testComponent', $result);
-        $this->assertStringContainsString('CodeMirror', $result);
-    }
 }

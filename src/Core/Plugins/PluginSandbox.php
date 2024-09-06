@@ -36,14 +36,14 @@ class PluginSandbox
      */
     public function execute(callable $plugin, array $args, array $data)
     {
-        $sandbox = function () use ($plugin, $args, $data) {
+        $sandbox = function () use ($plugin, $args) {
             $allowedFunctions = $this->allowedFunctions;
             $allowedClasses = $this->allowedClasses;
 
             return eval(
                 'use ' . implode(', ', $allowedClasses) . ';' .
                 'foreach ($allowedFunctions as $func) { if (!function_exists($func)) { function $func(...$args) { return call_user_func_array($func, $args); } } }' .
-                'return ($plugin)($args, $data);'
+                'return ($plugin)(...$args);'
             );
         };
 

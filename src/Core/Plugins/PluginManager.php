@@ -2,17 +2,23 @@
 
 declare(strict_types=1);
 
-namespace phpStack\TemplateSystem\Core\Plugins;
+namespace phpStack\Core\Plugins;
 
 use RuntimeException;
-use phpStack\TemplateSystem\Core\Template\PluginInterface;
-use phpStack\TemplateSystem\Core\Exceptions\PluginConflictException;
-use phpStack\TemplateSystem\Core\Plugins\IfPlugin;
-use phpStack\TemplateSystem\Core\Plugins\ForPlugin;
-use phpStack\TemplateSystem\Core\Plugins\SwitchPlugin;
-use phpStack\TemplateSystem\Core\Plugins\WhilePlugin;
-use phpStack\TemplateSystem\Core\Plugins\ForeachPlugin;
-use phpStack\TemplateSystem\Core\Plugins\MatchPlugin;
+use phpStack\Core\Template\PluginInterface;
+use phpStack\Core\Exceptions\PluginConflictException;
+use phpStack\Core\Template\Plugins\ComponentPlugin;
+use phpStack\Core\Template\Plugins\FilterPlugin;
+use phpStack\Core\Template\Plugins\ForeachPlugin;
+use phpStack\Core\Template\Plugins\ForPlugin;
+use phpStack\Core\Template\Plugins\IfPlugin;
+use phpStack\Core\Template\Plugins\IncludePlugin;
+use phpStack\Core\Template\Plugins\MatchPlugin;
+use phpStack\Core\Template\Plugins\RenderPlugin;
+use phpStack\Core\Template\Plugins\SortPlugin;
+use phpStack\Core\Template\Plugins\SwitchPlugin;
+use phpStack\Core\Template\Plugins\WhilePlugin;
+use phpStack\Core\Template\TemplateEngine;
 
 interface HtmxPluginInterface extends PluginInterface
 {
@@ -27,27 +33,38 @@ interface HtmxPluginInterface extends PluginInterface
  */
 class PluginManager
 {
-    /** @var array<string, array{plugin: PluginInterface|callable, version: string, enabled: bool}> */
+    /** @var array<string, array{plugin: PluginInterface|callable, enabled: bool}> */
     private array $plugins = [];
-    private array $versions = [];
+    /** @var array<string, array<string>> */
     private array $dependencies = [];
+    /** @var array<string, array<string, callable>> */
     private array $hooks = [];
     /** @var array<string> */
     private array $loadOrder = [];
+    private TemplateEngine $templateEngine;
+    private string $templateDir;
 
-    public function __construct()
+    public function __construct(TemplateEngine $templateEngine, string $templateDir)
     {
+        $this->templateEngine = $templateEngine;
+        $this->templateDir = $templateDir;
         $this->registerDefaultPlugins();
     }
 
     private function registerDefaultPlugins(): void
     {
-        $this->registerPlugin('if', new IfPlugin(), '1.0.0');
-        $this->registerPlugin('switch', new SwitchPlugin(), '1.0.0');
-        $this->registerPlugin('while', new WhilePlugin(), '1.0.0');
-        $this->registerPlugin('for', new ForPlugin(), '1.0.0');
-        $this->registerPlugin('foreach', new ForeachPlugin(), '1.0.0');
-        $this->registerPlugin('match', new MatchPlugin(), '1.0.0');
+        // Note: ComponentPlugin instantiation is commented out as it requires parameters we don't have
+        // $this->registerPlugin('component', new ComponentPlugin(...));
+        $this->registerPlugin('filter', new FilterPlugin());
+        $this->registerPlugin('foreach', new ForeachPlugin());
+        $this->registerPlugin('for', new ForPlugin($this->templateEngine));
+        $this->registerPlugin('if', new IfPlugin($this->templateEngine));
+        $this->registerPlugin('include', new IncludePlugin($this->templateDir));
+        $this->registerPlugin('match', new MatchPlugin());
+        $this->registerPlugin('render', new RenderPlugin($this->templateEngine));
+        $this->registerPlugin('sort', new SortPlugin());
+        $this->registerPlugin('switch', new SwitchPlugin());
+        $this->registerPlugin('while', new WhilePlugin());
     }
 
     /**
@@ -55,13 +72,11 @@ class PluginManager
      *
      * @param string $name The name of the plugin.
      * @param PluginInterface|callable $plugin The plugin instance or callable.
-     * @param string $version The version of the plugin.
-     * @param array $dependencies An array of plugin names that this plugin depends on.
+     * @param array<string> $dependencies An array of plugin names that this plugin depends on.
      */
-    public function registerPlugin(string $name, PluginInterface|callable $plugin, string $version, array $dependencies = []): void
+    public function registerPlugin(string $name, PluginInterface|callable $plugin, array $dependencies = []): void
     {
-        $this->plugins[$name] = ['plugin' => $plugin, 'version' => $version, 'enabled' => true];
-        $this->versions[$name] = $version;
+        $this->plugins[$name] = ['plugin' => $plugin, 'enabled' => true];
         $this->dependencies[$name] = $dependencies;
         $this->loadOrder[] = $name;
 
@@ -71,250 +86,10 @@ class PluginManager
     }
 
     /**
-     * Get a plugin by name.
-     *
-     * @param string $name The name of the plugin.
-     * @return PluginInterface|null The plugin instance if found, null otherwise.
-     */
-    public function getPlugin(string $name): ?PluginInterface
-    {
-        return $this->plugins[$name]['plugin'] instanceof PluginInterface ? $this->plugins[$name]['plugin'] : null;
-    }
-
-    /**
-     * Check if a plugin exists.
-     *
-     * @param string $name The name of the plugin.
-     * @return bool True if the plugin exists, false otherwise.
-     */
-    public function hasPlugin(string $name): bool
-    {
-        return isset($this->plugins[$name]);
-    }
-
-    /**
-     * Get the version of a plugin.
-     *
-     * @param string $name The name of the plugin.
-     * @return string|null The version of the plugin if found, null otherwise.
-     */
-    public function getVersion(string $name): ?string
-    {
-        return $this->versions[$name] ?? null;
-    }
-
-    /**
-     * Get the dependencies of a plugin.
-     *
-     * @param string $name The name of the plugin.
-     * @return array An array of plugin names that this plugin depends on.
-     */
-    public function getDependencies(string $name): array
-    {
-        return $this->dependencies[$name] ?? [];
-    }
-
-    /**
-     * Get all enabled plugins.
-     *
-     * @return array<string, PluginInterface|callable>
-     */
-    public function getAll(): array
-    {
-        return array_filter(
-            array_map(
-                fn($plugin) => $plugin['plugin'],
-                $this->plugins
-            ),
-            fn($plugin, $key) => $this->plugins[$key]['enabled'],
-            ARRAY_FILTER_USE_BOTH
-        );
-    }
-
-    /**
-     * Resolve conflicts between plugins.
-     *
-     * @param array<array{plugins: array<string>, resolution?: string}> $conflictingPlugins
-     * @throws \InvalidArgumentException If the conflict definition is invalid.
-     */
-    public function resolveConflicts(array $conflictingPlugins): void
-    {
-        $resolvedConflicts = [];
-
-        foreach ($conflictingPlugins as $conflict) {
-            if (!isset($conflict['plugins']) || !is_array($conflict['plugins']) || count($conflict['plugins']) < 2) {
-                throw new \InvalidArgumentException("Invalid conflict definition");
-            }
-
-            $resolution = $this->resolveConflict($conflict['plugins'], $conflict['resolution'] ?? 'disable');
-            $resolvedConflicts[] = $resolution;
-        }
-
-        // Apply resolutions
-        foreach ($resolvedConflicts as $resolution) {
-            foreach ($resolution['disabled'] as $pluginName) {
-                $this->disablePlugin($pluginName);
-            }
-            foreach ($resolution['enabled'] as $pluginName) {
-                $this->enablePlugin($pluginName);
-            }
-        }
-
-        // Reorder plugins based on dependencies and conflicts
-        $this->reorderPlugins();
-    }
-
-    /**
-     * Resolve a conflict between plugins.
-     *
-     * @param array<string> $conflictingPluginNames
-     * @param string $resolutionStrategy
-     * @return array{enabled: array<string>, disabled: array<string>}
-     * @throws \InvalidArgumentException If the resolution strategy is unknown.
-     */
-    private function resolveConflict(array $conflictingPluginNames, string $resolutionStrategy): array
-    {
-        $enabled = [];
-        $disabled = [];
-
-        switch ($resolutionStrategy) {
-            case 'disable':
-                $enabled[] = $conflictingPluginNames[0];
-                $disabled = array_slice($conflictingPluginNames, 1);
-                break;
-
-            case 'version':
-                $highestVersion = '0.0.0';
-                $highestVersionPlugin = '';
-                foreach ($conflictingPluginNames as $pluginName) {
-                    $version = $this->plugins[$pluginName]['version'];
-                    if (version_compare($version, $highestVersion, '>')) {
-                        $highestVersion = $version;
-                        $highestVersionPlugin = $pluginName;
-                    }
-                }
-                $enabled[] = $highestVersionPlugin;
-                $disabled = array_diff($conflictingPluginNames, [$highestVersionPlugin]);
-                break;
-
-            case 'order':
-                foreach ($this->loadOrder as $pluginName) {
-                    if (in_array($pluginName, $conflictingPluginNames)) {
-                        $enabled[] = $pluginName;
-                        $disabled = array_diff($conflictingPluginNames, [$pluginName]);
-                        break;
-                    }
-                }
-                break;
-
-            default:
-                throw new \InvalidArgumentException("Unknown resolution strategy: {$resolutionStrategy}");
-        }
-
-        return [
-            'enabled' => $enabled,
-            'disabled' => $disabled,
-        ];
-    }
-
-    /**
-     * Disable a plugin.
-     *
-     * @param string $name The name of the plugin to disable.
-     */
-    private function disablePlugin(string $name): void
-    {
-        if (isset($this->plugins[$name])) {
-            $this->plugins[$name]['enabled'] = false;
-        }
-    }
-
-    /**
-     * Enable a plugin.
-     *
-     * @param string $name The name of the plugin to enable.
-     */
-    private function enablePlugin(string $name): void
-    {
-        if (isset($this->plugins[$name])) {
-            $this->plugins[$name]['enabled'] = true;
-        }
-    }
-
-    /**
-     * Reorder plugins based on dependencies.
-     */
-    private function reorderPlugins(): void
-    {
-        $graph = [];
-        foreach ($this->plugins as $name => $plugin) {
-            $graph[$name] = [];
-            if ($plugin['plugin'] instanceof PluginInterface && method_exists($plugin['plugin'], 'getDependencies')) {
-                $graph[$name] = $plugin['plugin']->getDependencies();
-            }
-        }
-
-        $sortedPlugins = $this->topologicalSort($graph);
-        $this->loadOrder = array_intersect($sortedPlugins, array_keys($this->getAll()));
-    }
-
-    /**
-     * Perform a topological sort on the plugin dependency graph.
-     *
-     * @param array<string, array<string>> $graph
-     * @return array<string>
-     */
-    private function topologicalSort(array $graph): array
-    {
-        $sorted = [];
-        $visiting = [];
-        $visited = [];
-
-        foreach ($graph as $node => $dependencies) {
-            if (!isset($visited[$node])) {
-                $this->visit($node, $graph, $sorted, $visiting, $visited);
-            }
-        }
-
-        return array_reverse($sorted);
-    }
-
-    /**
-     * Visit a node in the dependency graph during topological sort.
-     *
-     * @param string $node
-     * @param array<string, array<string>> $graph
-     * @param array<string> $sorted
-     * @param array<string, bool> $visiting
-     * @param array<string, bool> $visited
-     * @throws PluginConflictException If a circular dependency is detected.
-     */
-    private function visit(string $node, array $graph, array &$sorted, array &$visiting, array &$visited): void
-    {
-        $visiting[$node] = true;
-
-        if (isset($graph[$node])) {
-            foreach ($graph[$node] as $dependency) {
-                if (isset($visiting[$dependency])) {
-                    throw new PluginConflictException("Circular dependency detected: {$node} -> {$dependency}");
-                }
-
-                if (!isset($visited[$dependency])) {
-                    $this->visit($dependency, $graph, $sorted, $visiting, $visited);
-                }
-            }
-        }
-
-        unset($visiting[$node]);
-        $visited[$node] = true;
-        $sorted[] = $node;
-    }
-
-    /**
      * Register hooks for a plugin.
      *
      * @param string $pluginName The name of the plugin.
-     * @param array $hooks An array of hook names and their corresponding callbacks.
+     * @param array<string, callable> $hooks An array of hook names and their corresponding callbacks.
      */
     private function registerHooks(string $pluginName, array $hooks): void
     {
@@ -322,111 +97,154 @@ class PluginManager
             if (!isset($this->hooks[$hookName])) {
                 $this->hooks[$hookName] = [];
             }
-            $this->hooks[$hookName][] = [$pluginName, $callback];
+            $this->hooks[$hookName][$pluginName] = $callback;
         }
     }
 
     /**
-     * Execute a hook.
+     * Get all registered plugins.
+     *
+     * @return array<string, array{plugin: PluginInterface|callable, enabled: bool}>
+     */
+    public function getPlugins(): array
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Get all plugin dependencies.
+     *
+     * @return array<string, array<string>>
+     */
+    public function getDependencies(): array
+    {
+        return $this->dependencies;
+    }
+
+    /**
+     * Get all registered hooks.
+     *
+     * @return array<string, array<string, callable>>
+     */
+    public function getHooks(): array
+    {
+        return $this->hooks;
+    }
+
+    /**
+     * Get the load order of plugins.
+     *
+     * @return array<string>
+     */
+    public function getLoadOrder(): array
+    {
+        return $this->loadOrder;
+    }
+
+    /**
+     * Enable a plugin.
+     *
+     * @param string $name The name of the plugin to enable.
+     * @throws RuntimeException If the plugin is not registered.
+     */
+    public function enablePlugin(string $name): void
+    {
+        if (!isset($this->plugins[$name])) {
+            throw new RuntimeException("Plugin '$name' is not registered.");
+        }
+        $this->plugins[$name]['enabled'] = true;
+    }
+
+    /**
+     * Disable a plugin.
+     *
+     * @param string $name The name of the plugin to disable.
+     * @throws RuntimeException If the plugin is not registered.
+     */
+    public function disablePlugin(string $name): void
+    {
+        if (!isset($this->plugins[$name])) {
+            throw new RuntimeException("Plugin '$name' is not registered.");
+        }
+        $this->plugins[$name]['enabled'] = false;
+    }
+
+    /**
+     * Check if a plugin is enabled.
+     *
+     * @param string $name The name of the plugin to check.
+     * @return bool True if the plugin is enabled, false otherwise.
+     * @throws RuntimeException If the plugin is not registered.
+     */
+    public function isPluginEnabled(string $name): bool
+    {
+        if (!isset($this->plugins[$name])) {
+            throw new RuntimeException("Plugin '$name' is not registered.");
+        }
+        return $this->plugins[$name]['enabled'];
+    }
+
+    /**
+     * Execute a hook for all enabled plugins that have registered it.
      *
      * @param string $hookName The name of the hook to execute.
-     * @param mixed ...$args Additional arguments to pass to the hook callbacks.
+     * @param mixed $args The arguments to pass to the hook callbacks.
+     * @return array<mixed> An array of results from the hook callbacks.
      */
-    public function executeHook(string $hookName, ...$args): void
+    public function executeHook(string $hookName, mixed $args): array
     {
-        if (!isset($this->hooks[$hookName])) {
-            return;
-        }
-
-        foreach ($this->hooks[$hookName] as [$pluginName, $callback]) {
-            if ($this->plugins[$pluginName]['enabled']) {
-                $this->executeSandboxed($pluginName, $callback, $args);
+        $results = [];
+        if (isset($this->hooks[$hookName])) {
+            foreach ($this->hooks[$hookName] as $pluginName => $callback) {
+                if ($this->isPluginEnabled($pluginName)) {
+                    $results[$pluginName] = $callback($args);
+                }
             }
         }
+        return $results;
     }
 
     /**
-     * Execute a plugin callback in a sandboxed environment.
+     * Resolve plugin conflicts based on their dependencies and load order.
      *
-     * @param string $pluginName The name of the plugin.
-     * @param callable $callback The callback to execute.
-     * @param array $args Additional arguments to pass to the callback.
-     * @return mixed The result of the callback execution.
+     * @throws PluginConflictException If there are circular dependencies or unresolvable conflicts.
      */
-    private function executeSandboxed(string $pluginName, callable $callback, array $args): mixed
+    public function resolveConflicts(): void
     {
-        $sandbox = new PluginSandbox();
-        return $sandbox->run($pluginName, $callback, $args);
+        $resolved = [];
+        $unresolved = [];
+
+        foreach ($this->loadOrder as $pluginName) {
+            $this->depthFirstSearch($pluginName, $resolved, $unresolved);
+        }
+
+        $this->loadOrder = array_values(array_unique($resolved));
     }
 
     /**
-     * Apply all registered HTMX plugins to the given content.
+     * Perform a depth-first search to resolve plugin dependencies.
      *
-     * @param string $content The content to process.
-     * @return string The processed content after applying all HTMX plugins.
+     * @param string $pluginName The name of the plugin to resolve.
+     * @param array<string> $resolved Array of resolved plugin names.
+     * @param array<string> $unresolved Array of unresolved plugin names.
+     * @throws PluginConflictException If there are circular dependencies.
      */
-    public function applyHtmxPlugins(string $content): string
+    private function depthFirstSearch(string $pluginName, array &$resolved, array &$unresolved): void
     {
-        foreach ($this->getAll() as $plugin) {
-            if ($plugin instanceof HtmxPluginInterface) {
-                $content = $plugin->processHtmxContent($content);
+        $unresolved[] = $pluginName;
+
+        if (isset($this->dependencies[$pluginName])) {
+            foreach ($this->dependencies[$pluginName] as $dependencyName) {
+                if (!in_array($dependencyName, $resolved)) {
+                    if (in_array($dependencyName, $unresolved)) {
+                        throw new PluginConflictException("Circular dependency detected: $pluginName <- $dependencyName");
+                    }
+                    $this->depthFirstSearch($dependencyName, $resolved, $unresolved);
+                }
             }
         }
-        return $content;
-    }
-}
 
-/**
- * PluginSandbox class for executing plugin callbacks in a controlled environment.
- */
-class PluginSandbox
-{
-    /**
-     * @var array<string> List of allowed functions in the sandbox.
-     */
-    private $allowedFunctions = [
-        'strlen', 'substr', 'strpos', 'str_replace', 'preg_match', 'preg_replace',
-        'array_map', 'array_filter', 'array_reduce', 'array_merge', 'array_push', 'array_pop',
-        'json_encode', 'json_decode', 'htmlspecialchars', 'strip_tags'
-    ];
-
-    /**
-     * Run a plugin callback in a sandboxed environment.
-     *
-     * @param string $pluginName The name of the plugin.
-     * @param callable $callback The callback to execute.
-     * @param array $args Additional arguments to pass to the callback.
-     * @return mixed The result of the callback execution.
-     */
-    public function run(string $pluginName, callable $callback, array $args)
-    {
-        $disabledFunctions = array_diff(get_defined_functions()['internal'], $this->allowedFunctions);
-        
-        // Disable potentially dangerous functions
-        // Note: disable_function and enable_function do not exist in PHP, so we will remove these lines.
-        // foreach ($disabledFunctions as $function) {
-        //     disable_function($function);
-        // }
-
-        // Set memory and execution time limits
-        ini_set('memory_limit', '32M');
-        set_time_limit(5); // 5 seconds max execution time
-
-        try {
-            $result = $callback(...$args);
-        } catch (\Throwable $e) {
-            // Log the error and return null or a default value
-            error_log("Error in plugin $pluginName: " . $e->getMessage());
-            $result = null;
-        } finally {
-            // Re-enable functions and reset limits
-            // foreach ($disabledFunctions as $function) {
-            //     enable_function($function);
-            // }
-            ini_restore('memory_limit');
-            set_time_limit(0); // Reset to unlimited
-        }
-
-        return $result;
+        $resolved[] = $pluginName;
+        array_pop($unresolved);
     }
 }

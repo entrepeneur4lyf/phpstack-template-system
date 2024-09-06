@@ -21,6 +21,10 @@ class ComposerStaticInit519f06e57fc5cb1805d34f711afc137b
             'phpStack\\TemplateSystem\\Tests\\' => 30,
             'phpStack\\TemplateSystem\\' => 24,
         ),
+        'S' => 
+        array (
+            'Symfony\\Component\\Finder\\' => 25,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -54,6 +58,10 @@ class ComposerStaticInit519f06e57fc5cb1805d34f711afc137b
         'phpStack\\TemplateSystem\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
         ),
         'Psr\\Http\\Message\\' => 
         array (
