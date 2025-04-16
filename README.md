@@ -1,3 +1,5 @@
+## This project has been sitting waiting for someone to use it but I never got around to finishing the documentation or publishing to packagist
+
 # phpStack Template System
 
 The phpStack Template System is a powerful and flexible package for PHP applications that provides template rendering, component management, and plugin support with HTMX integration. It offers a secure environment for executing plugins, advanced caching mechanisms, and tools for performance optimization.
